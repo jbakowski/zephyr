@@ -33,11 +33,19 @@ class Board():
 def host_board(host_port, host_baudrate):
     return Board(host_port, host_baudrate)
 
+@pytest.fixture(scope="session")
+def client_board(client_port, client_baudrate):
+    return Board(client_port, client_baudrate)
+
 def pytest_addoption(parser):
     parser.addoption("--host-port",
             help="The port to which the host device is attached (eg: /dev/ttyACM0)")
     parser.addoption("--host-baud", type=int, default=115200,
             help="Host's serial port baud rate (default: 115200)")
+    parser.addoption("--client-port",
+            help="The port to which the client device is attached (eg: /dev/ttyACM1)")
+    parser.addoption("--client-baud", type=int, default=115200,
+            help="Client's serial port baud rate (default: 115200)")
 
 @pytest.fixture(scope="session")
 def host_port(request):
@@ -46,6 +54,14 @@ def host_port(request):
 @pytest.fixture(scope="session")
 def host_baudrate(request):
     return request.config.getoption("--host-baud")
+
+@pytest.fixture(scope="session")
+def client_port(request):
+    return request.config.getoption("--client-port")
+
+@pytest.fixture(scope="session")
+def client_baudrate(request):
+    return request.config.getoption("--client-baud")
 
 @pytest.fixture(scope="session", autouse=True)
 def initialize_system(request):
