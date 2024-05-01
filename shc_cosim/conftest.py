@@ -5,6 +5,7 @@ import os
 import re
 import serial
 from time import time
+from powershield import PowerShield
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -62,6 +63,13 @@ def client_port(request):
 @pytest.fixture(scope="session")
 def client_baudrate(request):
     return request.config.getoption("--client-baud")
+
+@pytest.fixture(scope="session")
+def current_measurement_output(request):
+    PwSh = PowerShield("1k", 5)
+    while not PwSh.acqComplete:
+        time.sleep(1)
+    return "measurementData.csv"
 
 @pytest.fixture(scope="session", autouse=True)
 def initialize_system(request):
