@@ -1,0 +1,14 @@
+tests:
+  pm.state_transition_idle_to_active:
+    platform_allow:
+      - stm32l562e_dk
+    tags:
+      - pm
+      - gpio
+    harness: pytest
+    harness_config:
+      pytest_dut_scope: session
+      pytest_root:
+        - "pytest/test_idle_to_active_transition.py"
+      pytest_args: [--host-uuid=004800483137510D33333639]
+    sysbuild: true

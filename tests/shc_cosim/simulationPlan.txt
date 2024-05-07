@@ -1,0 +1,7 @@
+supervisor:print:start
+supervisor:delay:9
+supervisor:print:on
+host:gpio:ON
+supervisor:print:off
+host:gpio:OFF
+supervisor:print:end

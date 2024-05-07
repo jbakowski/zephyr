@@ -1,0 +1,8 @@
+# Copyright 2024 Intel Corporation
+# SPDX-License-Identifier: Apache-2.0
+
+source "share/sysbuild/Kconfig"
+
+config HOST_BOARD
+	string
+	default "stm32l562e_dk"

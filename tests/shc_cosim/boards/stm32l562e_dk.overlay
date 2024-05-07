@@ -1,0 +1,21 @@
+/ {
+    aliases {
+        gwu0 = &wakeup_pin_0;
+    };
+	gpioc {
+		wakeup-source;
+	};
+    gpio_keys {
+		wakeup_pin_0: wakeup_pin_0 {
+			gpios = < &gpioc 0x6 GPIO_ACTIVE_HIGH >;
+			label = "GPIO wake-up pin 0";
+		};
+	};
+	external_leds {
+			compatible = "gpio-leds";
+			ext_led0: ext_led_0 {
+				gpios = <&gpiod 11 GPIO_ACTIVE_HIGH>;
+		};
+	};
+};
+
