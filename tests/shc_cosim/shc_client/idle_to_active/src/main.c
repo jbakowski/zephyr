@@ -25,14 +25,14 @@ static struct gpio_callback wakeupPin_cb_data;
 
 static const struct gpio_dt_spec ext_led = GPIO_DT_SPEC_GET(EXT_LED_NODE, gpios);
 
-volatile bool blinkFlag = true;
+volatile bool blinkFlag = false;
 
 
 void wakeup_cb(const struct device *dev, struct gpio_callback *cb,
 			uint32_t pins)
 {
 	printk("Rising edge detected\n");
-	blinkFlag = false;
+	blinkFlag = true;
 	gpio_pin_toggle_dt(&ext_led);
 }
 

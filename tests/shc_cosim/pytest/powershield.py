@@ -35,6 +35,8 @@ class PowerShield():
     chunkSize = 1024 * 1024 # 1MB
     chunkCounter = 0
 
+    measurementDataReady = False
+
     def bytes_to_twobyte_values(self, byte_array):
         twobyte_values = []
         for i in range(0, len(byte_array), 2):
@@ -116,7 +118,7 @@ class PowerShield():
                     currentLeftoverCut = nextLeftoverCut
                     chunk = inputFile.read(chunkSize)
                     chunkArray = [item for item in chunk]
-                    # # sort the indexes in reverse, to avoid index shifting when removing patterns
+                    # sort the indexes in reverse, to avoid index shifting when removing patterns
                     indexesToRemove = sorted(indexesPerChunk[chunkNumber], reverse=True)
                     if (indexesToRemove):
                         if (indexesToRemove[0] + patternLength > self.chunkSize):
@@ -151,7 +153,10 @@ class PowerShield():
                     converted = self.convert_value(twoByte)
 
                     outputFile.write(str(converted) + '\n')
+        measurementDataReady = True
     def __init__(self, sampling_frequency, acquisition_time):
+        if not self.pwsh.is_open:
+            self.pwsh.open()
         self.sampling_frequency = sampling_frequency
         self.acquisition_time = acquisition_time
 
@@ -170,28 +175,24 @@ class PowerShield():
 
         acqTimeThread = threading.Thread(target=self.stopAcquisition, args=(self.acquisition_time,))
         acqTimeThread.start()
-
         rawToFileThread = threading.Thread(target=self.rawToFile, args=("rawData.csv",))
         rawToFileThread.start()
-
         self.pwsh_cmd("start")
         self.pwsh_get_data()
 
         rawToFileThread.join()
         metadataTimestampTuple = self.findPattern("rawData.csv", self.metadataTimestamp)
-
         self.rawToSanitized("rawData.csv", "sanitizedData.csv", metadataTimestampTuple)
         self.sanitizedToMeasurement("sanitizedData.csv", "measurementData.csv")
         self.pwsh.close()
+
     def read_lines_from_string(self, input_string):
         lines = input_string.split("\r\n")
         return lines
 
-
     def pwsh_cmd(self, cmd):
         print("[CMD]", cmd, flush=True)
         self.pwsh.write((cmd + "\n").encode('ascii'))
-
 
     def pwsh_get_timeout(self, timeout):
         buff = []

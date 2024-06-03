@@ -1,4 +1,29 @@
+import pytest
+import subprocess
+import time
+import os
+import shutil
 from current_analyzer import current_RMS, detect_single_transition, detect_multiple_rising_edge, detect_multiple_falling_edge, measure_single_transition
+
+@pytest.fixture(scope="module", autouse=True)
+def setup_client(request):
+    client_board = request.config.getoption('--client-board')
+    client_uuid = request.config.getoption('--client-uuid')
+    client_path = "../shc_client/idle_to_active"
+    subprocess.run(["west", "build", "-b", str(client_board)], cwd=client_path, check=True)
+    print("Client binary built!")
+    subprocess.run(["west", "flash", "-r", "pyocd", "--dev-id", client_uuid], cwd=client_path, check=True)
+    print("Client binary flashed!")
+
+@pytest.fixture(scope="module", autouse=True)
+def module_path(request):
+    return "../shc_client/idle_to_active/"
+
+@pytest.fixture(scope="module", autouse=True)
+def move_measurement_data(module_path):
+    yield
+    shutil.move("measurementData.csv", module_path)
+    shutil.move("supervisor_log.txt", module_path)
 
 def test_expected_rms(current_measurement_output):
     average_expected_value = 0.00725440798118475988888888888889

@@ -83,7 +83,7 @@ void gpio_init(const struct device *gpio_dev) {
     }
 
     // TODO: unhardcode this later and implement commands for dynamic pin setup
-    ret = gpio_pin_configure(gpio_dev, 4, GPIO_OUTPUT_ACTIVE);
+    ret = gpio_pin_configure(gpio_dev, 4, GPIO_OUTPUT_INACTIVE | GPIO_PULL_DOWN);
     if (ret > 0) {
         printk("Error %d: failed to configure GPIO pin %d\n", ret, 4);
         return;

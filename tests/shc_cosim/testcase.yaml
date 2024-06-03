@@ -10,5 +10,4 @@ tests:
       pytest_dut_scope: session
       pytest_root:
         - "pytest/test_idle_to_active_transition.py"
-      pytest_args: [--host-uuid=004800483137510D33333639]
-    sysbuild: true
+      pytest_args: [--host-uuid=004800483137510D33333639, --client-uuid=004E003F3137510B33333639, --host-board=stm32l562e_dk, --client-board=stm32l562e_dk, --powershield=/dev/serial/by-id/usb-STMicroelectronics_STLINK-V3_004800483137510D33333639-if02]

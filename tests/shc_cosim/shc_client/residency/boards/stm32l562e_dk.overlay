@@ -1,0 +1,9 @@
+/ {
+	external_leds {
+			compatible = "gpio-leds";
+			ext_led0: ext_led_0 {
+				gpios = <&gpiod 11 GPIO_ACTIVE_HIGH>;
+		};
+	};
+};
+

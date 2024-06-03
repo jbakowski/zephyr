@@ -3,5 +3,6 @@ supervisor:delay:9
 supervisor:print:on
 host:gpio:ON
 supervisor:print:off
+supervisor:delay:1
 host:gpio:OFF
 supervisor:print:end
