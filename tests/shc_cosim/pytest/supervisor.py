@@ -6,7 +6,7 @@ class Supervisor():
     def __init__(self, host_port, host_baud):
         self.host_port = host_port
         self.host_baud = host_baud
-        self.host_serial_device = serial.Serial(self.host_port, self.host_baud, timeout=1)
+        #self.host_serial_device = serial.Serial(self.host_port, self.host_baud, timeout=1)
         print(host_port)
         print(host_baud)
 
@@ -26,27 +26,35 @@ class Supervisor():
         print(f"Sent command '{command}' via UART")
 
     def parse_commands(self, file_path):
+        loops = {}
         with open(file_path, 'r') as file:
-            for line in file:
-                line = line.strip()
+            while True:
+                pos = file.tell()
+                line = file.readline().strip()
                 if not line:
-                    continue
+                    break
 
                 parts = line.split(':')
-                if len(parts) != 3:
-                    print(f"Invalid command format: {line}")
-                    continue
+                if len(parts) == 1:
+                    entity = parts[0]
+                else:
+                    entity, device, action = parts
 
-                entity, device, action = parts
-
-                if entity == 'supervisor':
+                if entity == 'loop':
+                    if device not in loops:
+                        loops[device] = [int(action), pos]
+                elif entity == 'supervisor':
                     self.execute_supervisor_action(device, action)
                 elif entity == 'host':
                     self.send_command_via_uart(device + ":" + action)
                 elif entity == 'client':
                     pass
-                else:
-                    print(f"Unknown entity: {entity}")
+                elif entity in loops:
+                    loops[entity][0] -= 1
+                    if loops[entity][0] != 0:
+                        file.seek(loops[entity][1])
+                    else:
+                        del loops[entity]
 
     def close_uart(self):
         if self.host_serial_device.is_open:
